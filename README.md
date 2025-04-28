@@ -15,8 +15,7 @@
    - Integrar eslint y prettier para formato consistente.  
 
 2. **Sistema de autenticación visual**:  
-   - Usar NextAuth.js para manejar 3 roles:  
-     - **Admin**: Acceso completo a estadísticas y CRUDs.  
+   - Usar NextAuth.js para manejar 2 roles:    
      - **Vendedor**: Gestión de inventario y órdenes.  
      - **Cliente**: Compra y seguimiento de pedidos.  
    - Diseñar pantallas de login/registro con componentes de **shadcn/ui**.  
