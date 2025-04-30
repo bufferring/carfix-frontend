@@ -12,7 +12,7 @@
 1. **Configuración inicial del proyecto**:  
    - Crear proyecto con Next.js 14 (App Router) + TypeScript.  
    - Configurar estructura de carpetas: `/autenticacion`, `/panel`, `/catalogo`.  
-   - Integrar eslint y prettier para formato consistente.  
+   
 
 2. **Sistema de autenticación visual**:  
    - Usar NextAuth.js para manejar 2 roles:    
@@ -22,19 +22,13 @@
 
 3. **Vistas principales**:  
    - **Catálogo de vehículos**:  
-     - Tabla filtrable por marca/año (usar TanStack Table).  
+     - Tabla filtrable por marca/año .  
      - Modal para añadir nuevos vehículos con validación.  
    - **Listado de repuestos**:  
      - Grid de cards responsive con imágenes optimizadas.  
      - Botones de acción rápida (añadir al carrito/favoritos).  
-   - **Carrito de compras**:  
-     - Gestión de estado global con Zustand.  
+   - **Carrito de compras**:    
      - Resumen de compra con cálculo de impuestos.  
-
-4. **Conexión con backend**:  
-   - Configurar cliente HTTP (axios o fetch).  
-   - Manejar errores de API con notificaciones toast.  
-   - Proteger rutas según roles (middleware de Next.js).  
 
 ---
 
@@ -46,17 +40,16 @@
 
 📋 **Tareas Detalladas:**  
 1. **Búsqueda inteligente**:  
-   - Autocompletado predictivo (integración con Meilisearch).  
+   - Autocompletado predictivo.  
    - Filtros por compatibilidad usando chips seleccionables.  
    - Historial de búsquedas almacenado en localStorage.  
 
 2. **Componentes interactivos**:  
-   - Galería de imágenes con zoom (usar lightgallery.js).  
+   - Galería de imágenes con zoom.  
    - Comparador de repuestos con arrastrar/soltar (dnd-kit).  
-   - Transiciones suaves entre páginas (Framer Motion).  
+   - Transiciones suaves entre páginas.  
 
-3. **Optimizaciones clave**:  
-   - Cachear consultas API con React Query.  
+3. **Optimizaciones clave**:    
    - Convertir imágenes a WebP usando Image de Next.js.  
    - Implementar PWA para modo offline (workbox.js).  
 
