@@ -51,11 +51,8 @@
 
 3. **Optimizaciones clave**:    
    - Convertir imágenes a WebP usando Image de Next.js.  
-   - Implementar PWA para modo offline (workbox.js).  
 
 4. **Sistema de diseño**:  
-   - Crear librería de componentes en Storybook.  
-   - Documentar tokens de diseño (colores, tipografías).  
    - Diseñar tema oscuro/claro con variables CSS.  
 
 ---
@@ -69,9 +66,7 @@
 
 📋 **Tareas Detalladas:**  
 1. **Paneles de control**:  
-   - Gráficos en tiempo real (ventas/inventario) usando **Chart.js**.  
-   - Tablas interactivas con filtros para datos históricos.  
-   - Visualización de métricas de conversión (integración con Metabase).  
+   - Gráficos en tiempo real (ventas/inventario).  
 
 2. **Sistema de recomendaciones**:  
    - Sección "Clientes también compraron..." (datos del backend).  
@@ -79,7 +74,7 @@
 
 3. **Automatizaciones frontend**:  
    - Notificaciones push para alertas de stock.  
-   - Recordatorios de carrito abandonado (usando WebSockets).  
+   - Recordatorios de carrito abandonado.  
 
 4. **Generación de reportes**:  
    - Exportar datos a PDF (usar **pdf-lib**).  
