@@ -81,3 +81,7 @@
    - Botón "Descargar Excel" con datos filtrados.  
 
 ---
+
+## 🚀 Live Preview  
+**¡Explora nuestra versión en vivo!**  
+[![Vercel](https://img.shields.io/badge/🚀_Live_Demo-Vercel-000?style=for-the-badge&logo=vercel)](https://v0-new-project-m8ro138fbns.vercel.app/)
