@@ -1,0 +1,51 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Entornos y variables
+.env*
+!.env.example
+
+# Builds y artefactos
+.next/
+out/
+dist/
+build/
+
+# Cache
+.cache/
+.nx/cache
+
+# Logs
+*.log
+logs/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDEs y editores
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+coverage/
+.nyc_output/
+
+# Paquetes
+*.tgz
+
+# pnpm
+pnpm-debug.log*
+
+# Configuraciones personales
+*.local
+
+# Next.js específico
+.nextflow/
+standalone/
