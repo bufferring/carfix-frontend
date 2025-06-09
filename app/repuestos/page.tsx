@@ -32,7 +32,7 @@ export default function RepuestosPage() {
       id: 1,
       name: "Suspensión Delantera F-150 Fortaleza",
       price: 90.99,
-      image: "/images/products/Suspensión Delantera F-150 Fortaleza.web",
+      image: "/images/products/Suspensión Delantera F-150 Fortaleza.webp",
       rating: 4.5,
       category: "Suspensión",
     },
