@@ -30,11 +30,11 @@ export default function RepuestosPage() {
   const products = [
     {
       id: 1,
-      name: "Filtro de Aceite Premium",
-      price: 24.99,
-      image: "/images/products/filtro-aceite.png",
+      name: "Suspensión Delantera F-150 Fortaleza",
+      price: 90.99,
+      image: "/images/products/Suspensión Delantera F-150 Fortaleza.web",
       rating: 4.5,
-      category: "Filtros",
+      category: "Suspensión",
     },
     {
       id: 2,
