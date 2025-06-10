@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Star, Filter, ShoppingCart, Loader2 } from "lucide-react" // Se agrega Loader2 para el ícono de carga
+import { Star, Filter, ShoppingCart, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -23,8 +23,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 
-// 1. DEFINICIÓN DE TIPOS DE DATOS SEGÚN TU API
-// Esto ayuda a evitar errores y mejora el autocompletado en tu editor.
+// --- DEFINICIÓN DE TIPOS DE DATOS ---
 type ApiCategory = {
   id: number
   name: string
@@ -34,23 +33,28 @@ type ApiCategory = {
 type SparePart = {
   id: number
   name: string
-  price: string // El precio viene como texto desde la API
+  price: string
   stock: number
   description: string
-  Category: ApiCategory // Objeto anidado para la categoría
-  // Nota: Tu API no provee 'image' ni 'rating' por ahora.
+  Category: ApiCategory
+}
+
+type Brand = {
+  id: number
+  name: string
 }
 
 export default function RepuestosPage() {
   const { addItem } = useCart()
   const { toast } = useToast()
 
-  // 2. ESTADOS PARA MANEJAR LOS DATOS, LA CARGA Y LOS ERRORES
+  // --- ESTADOS ---
   const [spareParts, setSpareParts] = useState<SparePart[]>([])
-  const [isLoading, setIsLoading] = useState(true) // Inicia en true para mostrar el cargador
+  const [apiBrands, setApiBrands] = useState<Brand[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Los filtros se mantienen estáticos por ahora. En el futuro, podrías cargarlos desde la API.
+  // Mantenemos las categorías estáticas por ahora
   const categories = [
     { id: "filtros", name: "Filtros" },
     { id: "baterias", name: "Baterías" },
@@ -62,47 +66,49 @@ export default function RepuestosPage() {
     { id: "refrigeracion", name: "Refrigeración" },
     { id: "sensores", name: "Sensores" },
   ]
-  const brands = [
-    { id: "bosch", name: "Bosch" },
-    { id: "acdelco", name: "ACDelco" },
-    { id: "monroe", name: "Monroe" },
-    { id: "fram", name: "Fram" },
-    { id: "gates", name: "Gates" },
-    { id: "ngk", name: "NGK" },
-  ]
-
-  // 3. LLAMADA A LA API CUANDO EL COMPONENTE SE CARGA
+  
   useEffect(() => {
-    const fetchSpareParts = async () => {
+    const fetchPageData = async () => {
       try {
-        const response = await fetch("https://ccw.prawn-enigmatic.ts.net/api/spare-parts")
-        if (!response.ok) {
-          throw new Error("Error al conectar con el servidor.")
-        }
-        const apiResponse = await response.json()
-        if (apiResponse.success && Array.isArray(apiResponse.data)) {
-          setSpareParts(apiResponse.data)
+        const [sparePartsResponse, brandsResponse] = await Promise.all([
+          fetch("https://ccw.prawn-enigmatic.ts.net/api/spare-parts"),
+          fetch("https://ccw.prawn-enigmatic.ts.net/api/brands"),
+        ])
+
+        if (!sparePartsResponse.ok) throw new Error("Error al obtener los repuestos.")
+        if (!brandsResponse.ok) throw new Error("Error al obtener las marcas.")
+
+        const sparePartsResult = await sparePartsResponse.json()
+        const brandsResult = await brandsResponse.json()
+
+        if (sparePartsResult.success && Array.isArray(sparePartsResult.data)) {
+          setSpareParts(sparePartsResult.data)
         } else {
-          throw new Error("El formato de los datos recibidos no es correcto.")
+          throw new Error("El formato de los datos de repuestos no es correcto.")
+        }
+
+        if (brandsResult.success && Array.isArray(brandsResult.data)) {
+          setApiBrands(brandsResult.data)
+        } else {
+          throw new Error("El formato de los datos de marcas no es correcto.")
         }
       } catch (err: any) {
         setError(err.message)
-        console.error("Error detallado:", err)
+        console.error("Error detallado al cargar los datos de la página:", err)
       } finally {
-        setIsLoading(false) // Oculta el cargador, tanto si hubo éxito como si hubo error
+        setIsLoading(false)
       }
     }
 
-    fetchSpareParts()
-  }, []) // El array vacío [] asegura que se ejecute solo una vez
+    fetchPageData()
+  }, [])
 
-  // 4. ADAPTACIÓN DE LA FUNCIÓN PARA AÑADIR AL CARRITO
   const handleAddToCart = (product: SparePart) => {
     addItem({
       id: product.id,
       name: product.name,
-      price: parseFloat(product.price), // Convertimos el precio a número
-      image: "/placeholder.svg", // Usamos una imagen genérica
+      price: parseFloat(product.price),
+      image: "/placeholder.svg",
       category: product.Category.name,
     })
 
@@ -112,17 +118,18 @@ export default function RepuestosPage() {
       duration: 3000,
     })
   }
-
-  // 5. RENDERIZADO CONDICIONAL: MUESTRA ESTADO DE CARGA O ERROR
+  
+  // RENDERIZADO DE ESTADO DE CARGA
   if (isLoading) {
     return (
       <div className="container py-8 flex justify-center items-center" style={{ minHeight: "60vh" }}>
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="ml-4 text-lg text-muted-foreground">Cargando Repuestos...</p>
+        <p className="ml-4 text-lg text-muted-foreground">Cargando...</p>
       </div>
     )
   }
 
+  // RENDERIZADO DE ESTADO DE ERROR
   if (error) {
     return (
       <div className="container py-8 text-center text-destructive" style={{ minHeight: "60vh" }}>
@@ -135,13 +142,12 @@ export default function RepuestosPage() {
     )
   }
 
-  // El resto del componente se mantiene casi igual, solo cambia el origen de los datos
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-6">Catálogo de Repuestos</h1>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Filtros (se mantiene igual) */}
+        {/* Filtros para escritorio */}
         <div className="hidden lg:block w-64 shrink-0">
           <div className="sticky top-24 space-y-6">
             <div>
@@ -159,12 +165,7 @@ export default function RepuestosPage() {
                     {categories.map((category) => (
                       <div key={category.id} className="flex items-center space-x-2">
                         <Checkbox id={`category-${category.id}`} />
-                        <label
-                          htmlFor={`category-${category.id}`}
-                          className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {category.name}
-                        </label>
+                        <label htmlFor={`category-${category.id}`} className="text-sm">{category.name}</label>
                       </div>
                     ))}
                   </div>
@@ -172,11 +173,31 @@ export default function RepuestosPage() {
               </AccordionItem>
 
               <AccordionItem value="marcas">
-                {/* ... tu código de marcas aquí ... */}
+                <AccordionTrigger>Marcas</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-2">
+                    {apiBrands.map((brand) => (
+                      <div key={brand.id} className="flex items-center space-x-2">
+                        <Checkbox id={`brand-${brand.id}`} />
+                        <label htmlFor={`brand-${brand.id}`} className="text-sm">{brand.name}</label>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
               </AccordionItem>
-
+              
               <AccordionItem value="precio">
-                {/* ... tu código de rango de precios aquí ... */}
+                 <AccordionTrigger>Rango de Precio</AccordionTrigger>
+                 <AccordionContent>
+                   <div className="space-y-4">
+                     <div className="flex items-center space-x-2">
+                       <Input type="number" placeholder="Min" className="w-20" />
+                       <span>-</span>
+                       <Input type="number" placeholder="Max" className="w-20" />
+                     </div>
+                     <Button size="sm" className="w-full">Aplicar</Button>
+                   </div>
+                 </AccordionContent>
               </AccordionItem>
             </Accordion>
             
@@ -186,25 +207,14 @@ export default function RepuestosPage() {
 
         {/* Contenido principal */}
         <div className="flex-1">
-          {/* Barra de filtros móvil (se mantiene igual) */}
-          <div className="lg:hidden flex items-center justify-between mb-6">
-            {/* ... tu código de filtros móviles aquí ... */}
-          </div>
-
-          {/* Barra de ordenación para escritorio (se mantiene igual) */}
-          <div className="hidden lg:flex items-center justify-between mb-6">
-            {/* ... tu código de barra de ordenación aquí ... */}
-          </div>
-
-          {/* 6. LISTA DE PRODUCTOS DINÁMICA DESDE LA API */}
+          {/* Aquí puedes agregar la barra de filtros móvil si la necesitas */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {spareParts.map((product) => (
               <Card key={product.id} className="h-full hover:border-primary transition-colors overflow-hidden">
                 <Link href={`/repuestos/${product.id}`} className="block">
                   <div className="aspect-square relative">
                     <Image
-                      // ¡IMPORTANTE! Tu API no devuelve una imagen. Usamos una de respaldo.
-                      // Asegúrate de tener un archivo 'placeholder.svg' en tu carpeta /public
                       src={"/placeholder.svg"}
                       alt={product.name}
                       fill
@@ -214,13 +224,6 @@ export default function RepuestosPage() {
                   <CardHeader className="p-4">
                     <div className="flex justify-between items-start">
                       <Badge variant="outline">{product.Category.name}</Badge>
-                      {/* ¡IMPORTANTE! Tu API no devuelve un 'rating'. He comentado esta sección para evitar errores. */}
-                      {/* 
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-primary text-primary mr-1" />
-                        <span className="text-sm">{product.rating}</span>
-                      </div>
-                      */}
                     </div>
                     <CardTitle className="text-base mt-2">{product.name}</CardTitle>
                   </CardHeader>
@@ -232,7 +235,7 @@ export default function RepuestosPage() {
                     variant="secondary"
                     onClick={() => handleAddToCart(product)}
                     className="flex items-center gap-1"
-                    disabled={product.stock === 0} // Deshabilita el botón si no hay stock
+                    disabled={product.stock === 0}
                   >
                     <ShoppingCart className="h-4 w-4" />
                     {product.stock > 0 ? "Agregar" : "Agotado"}
@@ -240,11 +243,6 @@ export default function RepuestosPage() {
                 </CardFooter>
               </Card>
             ))}
-          </div>
-
-          {/* Paginación (se mantiene igual) */}
-          <div className="mt-8">
-            {/* ... tu código de paginación aquí ... */}
           </div>
         </div>
       </div>
